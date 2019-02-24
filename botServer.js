@@ -23,7 +23,13 @@ client.on('message', message => {
         .then((response) => {
           let data = response.data.data;
           let statsFields = [];
+          let count = 0;
           for (let child of data.children) { 
+            if(count ==2){
+              break;
+            }
+            count += 1
+
             let character = {};
               character.name = "Character"
               character.value = child.metadata.legend_name
