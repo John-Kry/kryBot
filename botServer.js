@@ -16,36 +16,33 @@ client.on('message', message => {
     message.reply('pong');
   }
   if (message.content.startsWith("!apex")) {
-    let username =message.content.split(" ")[1]
-    if(username){
-    let url = apexAPIURL + username
-    axios.get(url, { headers })
-      .then((response) => {
-        console.log(response.data)
-        let data = response.data.data;
-        let statsFields =[];
-        for(let stat of data.children[0].stats){
-          let field = {};
-          field.name = stat.metadata.name
-          field.value = stat.value + " percentile: " + stat.percentile + "%";
-          statsFields.push(field)
+    let username = message.content.split(" ")[1]
+    if (username) {
+      let url = apexAPIURL + username
+      axios.get(url, { headers })
+        .then((response) => {
+          let data = response.data.data;
+          let statsFields = [];
+          for (let child of data.children) { 
+            let character = {};
+              character.name = "Character"
+              character.value = child.metadata.legend_name
+              statsFields.push(character)
+            for (let stat of child.stats) {
+              let field = {};
+              field.name = stat.metadata.name
+              field.value = stat.value + " percentile: " + stat.percentile + "%";
+              statsFields.push(field)
+          }
         }
         message.channel.send({
           embed: {
-            color: 3447003,
-            author: {
-              name: data.metadata.platformUserHandle,
-              icon_url: data.children[0].metadata.icon
-            },
+            color: 15158332,
             title: data.metadata.platformUserHandle,
             description: "Here are some statistics about your character PC ONLY. The lower the percentile the better",
             fields: [{
               name: "Level",
               value: data.metadata.level
-            },
-            {
-              name: "Character",
-              value: data.children[0].metadata.legend_name
             }, ...statsFields
             ],
             timestamp: new Date(),
@@ -53,10 +50,10 @@ client.on('message', message => {
         })
       
       })
-      .catch((err) => {
-        console.log(err)
-        message.channel.send(username + " was not found...")
-      })
+  .catch((err) => {
+    console.log(err)
+    message.channel.send(username + " was not found...")
+  })
     }
 
   }
